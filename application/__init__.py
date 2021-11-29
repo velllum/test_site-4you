@@ -3,6 +3,7 @@ from fastapi import FastAPI
 
 from application.schemas.base import ErrorResponse
 
+
 logger = logging.getLogger(__name__)
 
 

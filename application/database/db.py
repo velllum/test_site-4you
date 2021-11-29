@@ -29,7 +29,7 @@ def init_db(path: str):
         connect_args={'check_same_thread': False},
     )
 
-    Base.metadata.create_all(engine)
+    # Base.metadata.create_all(engine)
 
     # создаем сессию
     session = sessionmaker(
