@@ -1,14 +1,12 @@
-import asyncio
 import logging
 from fastapi import FastAPI
 
-from .models.base import ErrorResponse
-
+from application.schemas.base import ErrorResponse
 
 logger = logging.getLogger(__name__)
 
 
-def create_app():
+def create_app() -> FastAPI:
     """- точка входа"""
     app = FastAPI(
         title="USER HTTP REST API",
@@ -16,9 +14,9 @@ def create_app():
         debug=True,
     )
 
-    app.state.loop = asyncio.get_event_loop()
     register_config(app)
     register_startup(app)
+    register_shutdown(app)
     # register_routers(app)
 
     return app
@@ -26,30 +24,54 @@ def create_app():
 
 def register_startup(app):
     """- запускается в начале работы"""
-    print("* START")
+    logger.info("* START")
 
     @app.on_event("startup")
     async def handler():
-        register_database(app)
+        try:
+            await register_database(app)
+            logger.info(f"REST API app startup executed")
+        except Exception as e:
+            logger.exception(e, 'Startup crashed')
+
+
+def register_shutdown(app):
+    """- запускается в конце"""
+    logger.info("* SHUTDOWN")
+
+    @app.on_event("shutdown")
+    async def handler():
+        logger.info('Shutdown called')
+        try:
+            await close_database(app)
+        except Exception as e:
+            logger.exception(e, 'Shutdown crashed')
 
 
 def register_config(app):
     """- регистрируем конфигурационные файлы"""
-    print("* CONFIG")
+    logger.info("* CONFIG")
     from . import config
     app.state.config = config.settings.settings
 
 
-def register_database(app):
-    """- регистрируем ьподключение к базе данных"""
-    print("* DATABASE")
+async def register_database(app):
+    """- регистрируем подключение к базе данных"""
+    logger.info("* START DATABASE")
     from . import database as db
     app.state.db = db.get_session(app)
 
 
+async def close_database(app):
+    """- закрываем базу данных"""
+    logger.info("* CLOSE DATABASE")
+    if app.state.db:
+        app.state.db.close()
+
+
 def register_routers(app):
     """- добавляем роуты"""
-    print("* ROUTERS")
+    logger.info("* ROUTERS")
     from . import routers
     routers.register_routers(app)
 

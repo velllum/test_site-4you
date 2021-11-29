@@ -2,15 +2,16 @@ import uvicorn
 
 from application import create_app
 
-
 app = create_app()
 
+conf = app.state.config
 
 if __name__ == "__main__":
     uvicorn.run(
         'app:app',
-        host=app.state.config.host,
-        port=app.state.config.port,
+        host=conf.host,
+        port=conf.port,
         reload=True,
-        debug=True
+        debug=True,
+        log_config='application/config/logging.conf'
     )
