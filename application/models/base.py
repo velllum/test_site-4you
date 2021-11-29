@@ -1,12 +1,11 @@
-from datetime import datetime
-from typing import (
-    Optional, 
-    List, 
-    Any,
-    Union
-)
 import enum
-from pydantic import BaseModel, Field
+from typing import (
+    Optional,
+    List,
+    Any
+)
+
+from pydantic import BaseModel
 
 
 class ValidationError(BaseModel):

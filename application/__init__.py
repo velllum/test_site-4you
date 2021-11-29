@@ -1,7 +1,8 @@
+import asyncio
 import logging
 from fastapi import FastAPI
-import asyncio
-from models.base import ErrorResponse
+
+from .models.base import ErrorResponse
 
 
 logger = logging.getLogger(__name__)
@@ -9,50 +10,52 @@ logger = logging.getLogger(__name__)
 
 def create_app():
     """- точка входа"""
-    root_path = config.get('root_path', None)
     app = FastAPI(
-        title="CraftRadio HTTP REST API",
+        title="USER HTTP REST API",
+        responses=responses(),
         debug=True,
-        root_path=root_path,
     )
 
-    app.state.args = args
-    app.state.config = config
-
+    app.state.loop = asyncio.get_event_loop()
+    register_config(app)
     register_startup(app)
+    # register_routers(app)
 
-    register_routers(app)
-
-    logger.info(f"REST API app allocated")
     return app
 
 
 def register_startup(app):
     """- запускается в начале работы"""
+    print("* START")
+
     @app.on_event("startup")
     async def handler():
-        await startup(app)
+        register_database(app)
+
+
+def register_config(app):
+    """- регистрируем конфигурационные файлы"""
+    print("* CONFIG")
+    from . import config
+    app.state.config = config.settings.settings
+
+
+def register_database(app):
+    """- регистрируем ьподключение к базе данных"""
+    print("* DATABASE")
+    from . import database as db
+    app.state.db = db.get_session(app)
 
 
 def register_routers(app):
     """- добавляем роуты"""
+    print("* ROUTERS")
     from . import routers
-    return routers.register_routers(app)
-
-
-async def startup(app):
-    """- инициализируем данные на старте"""
-    app.state.loop = asyncio.get_event_loop()
-
-    app.state.db_pool = await db.init(app.state.config['db'])
-    app.state.redis_pool = await redis.init(app.state.config['redis'])
-    app.state.smtp = await smtp.init(app.state.config['smtp'])
-    await storage.init(app.state.config['storage'])
-
-    return app
+    routers.register_routers(app)
 
 
 def responses():
+    """- реализуем ответы ошибок"""
     return {
         400: {
             "model": ErrorResponse
