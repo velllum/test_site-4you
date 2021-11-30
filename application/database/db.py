@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_engine() -> Engine:
-    # поолучить подключение
+    # получить подключение
     en = create_engine(
         url=settings.db,
         connect_args={'check_same_thread': False},
