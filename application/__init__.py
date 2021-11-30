@@ -52,28 +52,35 @@ def register_shutdown(app):
 def register_config(app):
     """- регистрируем конфигурационные файлы"""
     logger.info("* CONFIG")
-    from . import config
-    app.state.config = config.settings.settings
+    from application.config.settings import settings
+    app.state.config = settings
+
+
+# ==========================================
 
 
 async def register_database(app):
     """- регистрируем подключение к базе данных"""
     logger.info("* START DATABASE")
-    from . import database as db
-    app.state.db = db.get_session(app)
+    from application.database import db
+    app.state.db = db.get_db()
 
 
 async def close_database(app):
     """- закрываем базу данных"""
     logger.info("* CLOSE DATABASE")
-    if app.state.db:
-        app.state.db.close()
+    db = app.state.db
+    if db:
+        db.close()
+
+
+# ==========================================
 
 
 def register_routers(app):
     """- добавляем роуты"""
     logger.info("* ROUTERS")
-    from . import routers
+    from application import routers
     routers.register_routers(app)
 
 

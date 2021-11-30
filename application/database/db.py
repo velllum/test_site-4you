@@ -1,41 +1,43 @@
 import logging
+from typing import Optional
 
-from fastapi import FastAPI
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import sessionmaker, Session
 
-from application.models.users import Base
+from application.config.settings import settings
 
 logger = logging.getLogger(__name__)
 
 
-def get_session(app: FastAPI):
+def get_engine() -> Engine:
+    # поолучить подключение
+    en = create_engine(
+        url=settings.db,
+        connect_args={'check_same_thread': False},
+    )
+    return en
+
+
+engine = get_engine()
+
+
+def get_session() -> Session:
+    """- создаем сессию"""
+    logger.info("** INIT SESSION DATABASE")
+    sess = sessionmaker(
+        bind=engine,
+        autocommit=False,
+        autoflush=False,
+    )
+    return sess()
+
+
+def get_db() -> Optional[Session]:
     """- получить сессию подключения к базе данных"""
-    session = init_db(app.state.config.db)
+    session = get_session()
     try:
         logger.info("** GET SESSION DATABASE")
         return session
     finally:
         session.close()
-
-
-def init_db(path: str):
-    """- реализация подключения"""
-    logger.info("** INIT SESSION DATABASE")
-
-    # создаем подключение
-    engine = create_engine(
-        url=path,
-        connect_args={'check_same_thread': False},
-    )
-
-    # Base.metadata.create_all(engine)
-
-    # создаем сессию
-    session = sessionmaker(
-        bind=engine,
-        autocommit=False,
-        autoflush=False,
-    )
-
-    return session()

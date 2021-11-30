@@ -1,12 +1,10 @@
 import logging
 from fastapi import FastAPI
 import asyncio
-import functools
-from misc.session import Session
 from misc.handlers import register_exception_handler
 from misc.mqtt import mqtt
 from misc.mqtt import queue
-from models.base import ErrorResponse
+from application.models import ErrorResponse
 
 
 logger = logging.getLogger(__name__)
@@ -73,7 +71,7 @@ def register_shutdown(app):
 
 def register_routers(app):
     """- добавляем роуты"""
-    from . import routers
+    from application import routers
     return routers.register_routers(app)
 
 
@@ -99,8 +97,7 @@ async def startup_jinja(app):
     from jinja2 import (
         Environment, 
         ChoiceLoader,
-        PackageLoader, 
-        FileSystemLoader, 
+        FileSystemLoader,
         select_autoescape
     )
 
