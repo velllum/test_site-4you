@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Request, Depends
-from misc.db import Connection
-from misc.session import Session
-from misc import db
-from misc.session import Session
+from typing import List
 
+from fastapi import APIRouter, Depends
+
+from ..schemas import users as sm
+from ..services.users import UserService
 
 router = APIRouter(
     prefix='/users',
@@ -11,10 +11,8 @@ router = APIRouter(
 )
 
 
-@router.get('/')
-async def index(
-    conn: Connection = Depends(), 
-    session: Session = Depends()
-) -> dict:
-    result = await db.select_from_table(conn, "pg_stats")
-    return result
+@router.get('/', response_model=List[sm.User])
+async def index(session: UserService = Depends()) -> List[sm.User]:
+    """- индексная страница пользователя
+    ../api/v2/users/"""
+    return session.get_list()

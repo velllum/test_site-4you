@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
-    """- точка входа"""
+    """- инициализация приложения"""
     app = FastAPI(
         title="USER HTTP REST API",
         responses=responses(),
@@ -18,12 +18,12 @@ def create_app() -> FastAPI:
     register_config(app)
     register_startup(app)
     register_shutdown(app)
-    # register_routers(app)
+    register_routers(app)
 
     return app
 
 
-def register_startup(app):
+def register_startup(app: FastAPI):
     """- запускается в начале работы"""
     logger.info("* START")
 
@@ -36,7 +36,7 @@ def register_startup(app):
             logger.exception(e, 'Startup crashed')
 
 
-def register_shutdown(app):
+def register_shutdown(app: FastAPI):
     """- запускается в конце"""
     logger.info("* SHUTDOWN")
 
@@ -49,7 +49,7 @@ def register_shutdown(app):
             logger.exception(e, 'Shutdown crashed')
 
 
-def register_config(app):
+def register_config(app: FastAPI):
     """- регистрируем конфигурационные файлы"""
     logger.info("* CONFIG")
     from application.config.settings import settings
@@ -59,7 +59,7 @@ def register_config(app):
 # ==========================================
 
 
-async def register_database(app):
+async def register_database(app: FastAPI):
     """- регистрируем подключение к базе данных"""
     logger.info("* START DATABASE")
     from application.database import db
@@ -73,15 +73,14 @@ async def close_database(app):
     if db:
         db.close()
 
-
 # ==========================================
 
 
-def register_routers(app):
+def register_routers(app: FastAPI):
     """- добавляем роуты"""
     logger.info("* ROUTERS")
     from application import routers
-    routers.register_routers(app)
+    routers.get_routers(app)
 
 
 def responses():

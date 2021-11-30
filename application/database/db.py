@@ -7,6 +7,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from application.config.settings import settings
 
+
 logger = logging.getLogger(__name__)
 
 
@@ -38,6 +39,6 @@ def get_db() -> Optional[Session]:
     session = get_session()
     try:
         logger.info("** GET SESSION DATABASE")
-        return session
+        yield session
     finally:
         session.close()
