@@ -18,5 +18,5 @@ class User(Base):
     middle_name = sa.Column(sa.String, nullable=False)
     email = sa.Column(sa.String, unique=True, nullable=False)
     password = sa.Column(sa.String, nullable=False)
-    created_date = sa.Column(sa.DateTime(timezone=True), default=datetime.now(), nullable=False)
-    updated_date = sa.Column(sa.DateTime(timezone=True), onupdate=datetime.now(), nullable=False)
+    created_date = sa.Column(sa.DateTime(timezone=True), default=datetime.now(), nullable=True)
+    updated_date = sa.Column(sa.DateTime(timezone=True), default=datetime.now(), nullable=True)

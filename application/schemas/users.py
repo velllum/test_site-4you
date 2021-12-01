@@ -10,8 +10,8 @@ class BaseUser(BaseModel):
     surname: str
     middle_name: str
     email: str
-    created_date: Optional[datetime]
-    updated_date: Optional[datetime]
+    # created_date: Optional[datetime]
+    # updated_date: Optional[datetime]
 
 
 class User(BaseUser):

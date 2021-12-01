@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from . import users
 
 
-VERSION_PREFIX = 'v2'
+VERSION_PREFIX = 'v1'
 API_PREFIX = f'/api/{VERSION_PREFIX}'
 
 
