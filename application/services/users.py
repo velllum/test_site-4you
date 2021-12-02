@@ -1,7 +1,7 @@
 from typing import List, Optional
 
 from fastapi import Depends, HTTPException
-from sqlalchemy import and_, or_
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from starlette import status
 
