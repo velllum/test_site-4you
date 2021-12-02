@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker, Session
 
-from application.config.settings import settings
+from ..config.settings import settings as st
 
 
 logger = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def get_engine() -> Engine:
     # получить подключение
     en = create_engine(
-        url=settings.db,
+        url=st.db,
         connect_args={'check_same_thread': False},
     )
     return en

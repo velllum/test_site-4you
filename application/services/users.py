@@ -10,34 +10,46 @@ from ..models import users as ml
 from ..schemas import users as sm
 
 
-class UserService:
-    """- Пользовательский сервис,
-     для хранения логики"""
+class BaseService:
+    """- базовый класс сервиса"""
 
     def __init__(self, session: Session = Depends(db.get_db)):
         self.session = session
 
     def _get(self, user_id: int) -> Optional[ml.User]:
         """- получить пользователя,
-        - если пользователь отсутствует отпровляем ошибку 404"""
-        response = self.session.query(ml.User).get(user_id)
-        if not response:
+        - если пользователь отсутствует отправляем ошибку 404"""
+        user = self.session.query(ml.User).get(user_id)
+
+        if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Пользователь с данным ID не найден"
             )
-        return response
+        return user
+
+
+class UserService(BaseService):
+    """- Пользовательский сервис"""
 
     def get_list(self) -> List[ml.User]:
         """- получить список пользователей"""
         return self.session.query(ml.User).all()
 
     def get_by_id(self, user_id: int) -> Optional[ml.User]:
-        """- получить пользлователя по id"""
+        """- получить пользователя по id"""
         return self._get(user_id)
 
     def create(self, user_data: sm.CreateUser) -> ml.User:
         """- создать пользователя"""
+
+        # проверяем если email существует вызываем исключение
+        if self.session.query(ml.User).filter(ml.User.email == user_data.email).first():
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Пользователь с таким email зарегистрирован"
+            )
+
         user = ml.User(**user_data.dict())
         self.session.add(user)
         self.session.commit()
@@ -51,6 +63,7 @@ class UserService:
             setattr(user, key, value)
 
         self.session.commit()
+
         return user
 
     def delete(self, user_id: int):
@@ -61,7 +74,7 @@ class UserService:
 
     def search(self, query_string: str) -> Optional[List[ml.User]]:
         """- поиск по полям"""
-        users = self.session.query(ml.User).filter(
+        query = self.session.query(ml.User).filter(
             or_(
                 ml.User.name.contains(query_string),
                 ml.User.surname.contains(query_string),
@@ -70,10 +83,10 @@ class UserService:
             )
         ).all()
 
-        if not users:
+        if not query:
             raise HTTPException(
-                status_code=status.HTTP_200_OK,
+                status_code=status.HTTP_404_NOT_FOUND,
                 detail="Ничего не найдено, попробуйте еще раз"
             )
 
-        return users
+        return query

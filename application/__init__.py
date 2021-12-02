@@ -1,25 +1,30 @@
 import logging
 from fastapi import FastAPI
 
-from application.schemas.base import ErrorResponse
+from .schemas.base import ErrorResponse
 
 
 logger = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
-    """- инициализация приложения"""
+    """- создаем приложение"""
     app = FastAPI(
         title="USER HTTP REST API",
         debug=True,
     )
 
+    init(app)
+
+    return app
+
+
+def init(app: FastAPI):
+    """- инициализируем пакеты"""
     register_config(app)
     register_startup(app)
     register_shutdown(app)
     register_routers(app)
-
-    return app
 
 
 def register_startup(app: FastAPI):
@@ -29,7 +34,7 @@ def register_startup(app: FastAPI):
     @app.on_event("startup")
     async def handler():
         try:
-            await register_database(app)
+            await start_database(app)
             logger.info(f"REST API app startup executed")
         except Exception as e:
             logger.exception(e, 'Startup crashed')
@@ -51,17 +56,17 @@ def register_shutdown(app: FastAPI):
 def register_config(app: FastAPI):
     """- регистрируем конфигурационные файлы"""
     logger.info("* CONFIG")
-    from application.config.settings import settings
+    from .config.settings import settings
     app.state.config = settings
 
 
 # ==========================================
 
 
-async def register_database(app: FastAPI):
+async def start_database(app: FastAPI):
     """- регистрируем подключение к базе данных"""
     logger.info("* START DATABASE")
-    from application.database import db
+    from .database import db
     app.state.db = db.get_db()
 
 
@@ -78,5 +83,5 @@ async def close_database(app):
 def register_routers(app: FastAPI):
     """- добавляем роуты"""
     logger.info("* ROUTERS")
-    from application import routers
+    from . import routers
     routers.get_routers(app)

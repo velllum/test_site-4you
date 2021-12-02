@@ -53,7 +53,7 @@ async def user_update(
     return session.update(user_id, user_data)
 
 
-@router.delete('/{user_id}', status_code=status.HTTP_204_NO_CONTENT)
+@router.delete('/{user_id}', status_code=status.HTTP_200_OK)
 async def user_delete(
     user_id: int,
     session: UserService = Depends()

@@ -1,0 +1,13 @@
+version: "3.8"  # optional since v1.27.0
+services:
+  api:
+    build:
+      context: .
+      dockerfile: application/docker/api/Dockerfile
+    command: python app.py
+    ports:
+      - "9000:9000"
+    volumes:
+      - /etc/timezone:/etc/timezone
+      - /etc/localtime:/etc/localtime
+      - .:/code

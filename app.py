@@ -13,5 +13,5 @@ if __name__ == "__main__":
         port=conf.port,
         reload=True,
         debug=True,
-        # log_config='application/config/logging.conf'
+        log_config='application/config/logging.conf'
     )
