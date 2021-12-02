@@ -11,7 +11,6 @@ def create_app() -> FastAPI:
     """- инициализация приложения"""
     app = FastAPI(
         title="USER HTTP REST API",
-        responses=responses(),
         debug=True,
     )
 
@@ -81,24 +80,3 @@ def register_routers(app: FastAPI):
     logger.info("* ROUTERS")
     from application import routers
     routers.get_routers(app)
-
-
-def responses():
-    """- реализуем ответы ошибок"""
-    return {
-        400: {
-            "model": ErrorResponse
-        },
-        401: {
-            "model": ErrorResponse
-        },
-        404: {
-            "model": ErrorResponse
-        },
-        422: {
-            "model": ErrorResponse
-        },
-        500: {
-            "model": ErrorResponse
-        },
-    }

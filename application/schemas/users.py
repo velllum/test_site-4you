@@ -1,7 +1,4 @@
-from datetime import datetime
-from typing import Optional, List
-
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class BaseUser(BaseModel):
@@ -10,8 +7,6 @@ class BaseUser(BaseModel):
     surname: str
     middle_name: str
     email: str
-    # created_date: Optional[datetime]
-    # updated_date: Optional[datetime]
 
 
 class User(BaseUser):
@@ -20,6 +15,11 @@ class User(BaseUser):
 
     class Config:
         orm_mode = True
+
+
+class SearchUser(User):
+    """- Найти пользователя"""
+    ...
 
 
 class CreateUser(BaseUser):
@@ -33,5 +33,5 @@ class UpdateUser(BaseUser):
 
 
 class DeleteUser(BaseUser):
-    """- Обновить пользователя"""
-    pass
+    """- Удалить пользователя"""
+    ...
