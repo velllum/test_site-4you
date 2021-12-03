@@ -6,6 +6,8 @@ from fastapi import HTTPException
 from pydantic import BaseModel, root_validator
 from starlette import status
 
+from ..services.message import MessageService
+
 
 class BaseUser(BaseModel):
     """- Базовый класс пользователя"""
@@ -34,19 +36,19 @@ class ValidatorUser(BaseUser):
             field=values.get("password"),
             pattern=pattern_password
         ):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пароль должен содержать не менее 6 символов, одну букву и одну цифру."
-            )
+            raise MessageService.error_404("Пароль должен содержать не менее 6 символов, одну букву и одну цифру.")
 
         elif not cls.is_pattern_valid(
             field=values.get("email"),
             pattern=pattern_email
         ):
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Укажите email правильно."
-            )
+            raise MessageService.error_404("Укажите email правильно.")
+
+        elif not values.get("name"):
+            raise MessageService.error_404("Укажите имя.")
+
+        elif not values.get("surname"):
+            raise MessageService.error_404("Укажите фамилию.")
 
         return values
 

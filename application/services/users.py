@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from starlette import status
 
+from .message import MessageService
 from ..database import db
 from ..models import users as ml
 from ..schemas import users as sm
@@ -22,10 +22,8 @@ class BaseService:
         user = self.session.query(ml.User).get(user_id)
 
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь с данным ID не найден"
-            )
+            raise MessageService.error_404("Пользователь с данным ID не найден")
+
         return user
 
 
@@ -45,10 +43,7 @@ class UserService(BaseService):
 
         # проверяем если email существует вызываем исключение
         if self.session.query(ml.User).filter(ml.User.email == user_data.email).first():
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Пользователь с таким email зарегистрирован"
-            )
+            raise MessageService.error_404("Пользователь с таким email зарегистрирован")
 
         user = ml.User(**user_data.dict())
         self.session.add(user)
@@ -81,9 +76,6 @@ class UserService(BaseService):
         ).all()
 
         if not query:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Ничего не найдено, попробуйте еще раз"
-            )
+            raise MessageService.error_404("Ничего не найдено, попробуйте еще раз")
 
         return query

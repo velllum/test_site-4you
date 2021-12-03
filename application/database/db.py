@@ -25,7 +25,6 @@ engine = get_engine()
 
 def get_session() -> Session:
     """- создаем сессию"""
-    logger.info("** INIT SESSION DATABASE")
     sess = sessionmaker(
         bind=engine,
         autocommit=False,
@@ -38,7 +37,6 @@ def get_db() -> Optional[Session]:
     """- получить сессию подключения к базе данных"""
     session = get_session()
     try:
-        logger.info("** GET SESSION DATABASE")
         yield session
     finally:
         session.close()

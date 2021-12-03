@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import sqlalchemy as sa
 from sqlalchemy.sql import func
 from sqlalchemy.ext.declarative import declarative_base
@@ -19,6 +17,5 @@ class User(Base):
     middle_name = sa.Column(sa.String, nullable=True)
     email = sa.Column(sa.String, unique=True)
     password = sa.Column(sa.String, nullable=True)
-    created_date = sa.Column(sa.DateTime(timezone=True), default=datetime.now())
-    updated_date = sa.Column(sa.DateTime(timezone=True), onupdate=datetime.now(), default=datetime.now())
-
+    created_date = sa.Column(sa.DateTime, server_default=func.now())
+    updated_date = sa.Column(sa.DateTime, server_default=func.now(), onupdate=func.now())
