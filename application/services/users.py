@@ -58,10 +58,7 @@ class UserService(BaseService):
     def update(self, user_id: int, user_data: sm.UpdateUser) -> ml.User:
         """- обновить пользователя"""
         user = self._get(user_id)
-
-        for key, value in user_data:
-            setattr(user, key, value)
-
+        self.session.query(ml.User).filter_by(id=user.id).update(user_data.dict())
         self.session.commit()
 
         return user
