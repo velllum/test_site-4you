@@ -69,9 +69,9 @@ async def user_delete(
 
 @router.get('/search/', response_model=List[sm.User])
 async def user_search(
-    query_string: str = Query(..., description="User search"),
+    q: str = Query(..., description="User search"),
     session: UserService = Depends()
 ) -> List[sm.User]:
     """- поиск пользователей
-    ../api/v1/user/search?q={query_string}"""
-    return session.search(query_string)
+    ../api/v1/user/search?q={q}"""
+    return session.search(q)

@@ -8,6 +8,4 @@ services:
     ports:
       - "9000:9000"
     volumes:
-      - /etc/timezone:/etc/timezone
-      - /etc/localtime:/etc/localtime
       - .:/code
