@@ -16,7 +16,7 @@ class BaseService:
     def __init__(self, session: Session = Depends(db.get_db)):
         self.session = session
 
-    def _get(self, user_id: int) -> Optional[ml.User]:
+    def check_user_id(self, user_id: int) -> Optional[ml.User]:
         """- получить пользователя,
         - если пользователь отсутствует отправляем ошибку 404"""
         user = self.session.query(ml.User).get(user_id)
@@ -36,7 +36,7 @@ class UserService(BaseService):
 
     def get_by_id(self, user_id: int) -> Optional[ml.User]:
         """- получить пользователя по id"""
-        return self._get(user_id)
+        return self.check_user_id(user_id)
 
     def create(self, user_data: sm.CreateUser) -> ml.User:
         """- создать пользователя"""
@@ -52,7 +52,7 @@ class UserService(BaseService):
 
     def update(self, user_id: int, user_data: sm.UpdateUser) -> ml.User:
         """- обновить пользователя"""
-        user = self._get(user_id)
+        user = self.check_user_id(user_id)
         self.session.query(ml.User).filter_by(id=user.id).update(user_data.dict())
         self.session.commit()
 
@@ -60,7 +60,7 @@ class UserService(BaseService):
 
     def delete(self, user_id: int):
         """- удалить пользователя"""
-        user = self._get(user_id)
+        user = self.check_user_id(user_id)
         self.session.delete(user)
         self.session.commit()
 
