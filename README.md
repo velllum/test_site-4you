@@ -36,7 +36,7 @@
 - **[POST] ../api/v1/user/create** - создать нового пользователя
 - **[PUT] ../api/v1/user/{user_id}** - обновить пользователя
 - **[DELETE] ../api/v1/user/{user_id}** - удалить пользователя
-- **[GET] ../api/v1/user/search?q={q}** - удалить пользователя
+- **[GET] ../api/v1/user/search?q={q}** - поиск пользователей
 
 ## Установка через Docker
 
