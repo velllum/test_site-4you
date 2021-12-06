@@ -5,3 +5,5 @@ starlette
 python-dotenv
 sqlalchemy
 alembic
+pytest
+requests

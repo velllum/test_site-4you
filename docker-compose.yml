@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: application/docker/api/Dockerfile
-    command: python app.py
+    command: python conftest.py
     ports:
       - "9000:9000"
     volumes:
