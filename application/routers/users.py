@@ -1,7 +1,8 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends, Response, Query
 from starlette import status
+from starlette.responses import Response
 
 from ..schemas import users as sm
 from ..services.users import UserService
@@ -67,11 +68,18 @@ async def user_delete(
     )
 
 
-@router.get('/search/', response_model=List[sm.User])
+@router.get('/search/', response_model=Optional[List[sm.User]], status_code=status.HTTP_200_OK)
 async def user_search(
     q: str = Query(..., description="User search"),
     session: UserService = Depends()
-) -> List[sm.User]:
+):
     """- поиск пользователей
     ../api/v1/user/search?q={q}"""
-    return session.search(q)
+    query = session.search(q)
+    if not query:
+        return Response(
+            status_code=status.HTTP_200_OK,
+            content="Ничего не найдено, попробуйте еще раз"
+        )
+
+    return query

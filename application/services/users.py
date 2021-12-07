@@ -75,7 +75,4 @@ class UserService(BaseService):
             )
         ).all()
 
-        if not query:
-            raise MessageService.error_404("Ничего не найдено, попробуйте еще раз")
-
         return query

@@ -1,32 +1,37 @@
-from typing import Dict
-
 import pytest
 from fastapi import FastAPI
+from sqlalchemy.orm import Session
 from starlette.testclient import TestClient
 
 from application import create_app
+from application.models.users import User
 from application.schemas.users import CreateUser
 
 
 @pytest.fixture
 def data_user():
     """- Временные данные тестового пользователя"""
-    data = dict(
+    yield CreateUser(**dict(
         name="Name",
         surname="Surname",
         middle_name="Middle name",
         email="email@email.ru",
         password="00000aaaa"
-    )
-
-    yield CreateUser(**data)
+    ))
 
 
 @pytest.fixture
 def app() -> FastAPI:
     """- получить объект приложения"""
-    app = create_app()
-    yield app
+    yield create_app()
+
+
+@pytest.fixture
+def db(app: FastAPI) -> Session:
+    """- получить сессию к базе данных"""
+    db = app.state.db
+    if db:
+        yield db
 
 
 @pytest.fixture
@@ -43,8 +48,13 @@ def prefix() -> str:
 
 
 @pytest.fixture
-def user(client: TestClient, prefix: str) -> Dict:
+def user(db: Session, data_user: CreateUser) -> User:
     """- получить клиента"""
-    response = client.get(prefix).json()
-    if response:
-        yield response[0]
+    user = get_user(db, data_user)
+    if user:
+        return user
+
+
+def get_user(session: Session, data: CreateUser) -> User:
+    """- получить юзера по email значению"""
+    return session.query(User).filter(User.email == data.email).first()
