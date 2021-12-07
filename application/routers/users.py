@@ -17,7 +17,7 @@ router = APIRouter(
 async def users(
     session: UserService = Depends()
 ) -> List[sm.User]:
-    """- плучить список всех пользователей
+    """- получить список всех пользователей
     ../api/v1/users/"""
     return session.get_list()
 

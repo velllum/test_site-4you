@@ -58,7 +58,7 @@ async def start_database(app: FastAPI):
     """- регистрируем подключение к базе данных"""
     logger.info("Запуск базы данных")
     from .database import db
-    app.state.db = db.get_db()
+    app.state.db = db.get_session()
 
 
 async def close_database(app):
