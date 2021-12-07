@@ -1,14 +1,5 @@
-from application.database.db import get_db, get_session
 from application.models.users import User
 from application.schemas.users import CreateUser
-
-# data_user = dict(
-#         name="Name",
-#         surname="Surname",
-#         middle_name="Middle name",
-#         email="email@email.ru",
-#         password="00000aaaa"
-#     )
 
 
 def test_users(client, prefix):
